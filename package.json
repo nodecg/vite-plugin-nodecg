@@ -1,0 +1,36 @@
+{
+  "name": "vite-plugin-nodecg",
+  "version": "0.1.0",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "keywords": [
+    "vite-plugin"
+  ],
+  "engines": {
+    "node": ">=16"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "author": {
+    "name": "Daniel Shields",
+    "email": "hello@danielshields.uk",
+    "url": "https://danielshields.uk"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dan-shields/vite-plugin-nodecg.git"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^17.0.21",
+    "rollup": "^2.68.0",
+    "typescript": "^4.5.5",
+    "vite": "^2.8.4"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.10",
+    "globby": "^13.1.1"
+  }
+}
