@@ -3,7 +3,7 @@
     "compilerOptions": {
         "allowSyntheticDefaultImports": true,
         "lib": ["ES2019"],
-        "module": "commonjs",
+        "module": "ES2020",
         "moduleResolution": "node",
         "target": "ES2019",
         "outDir": "./dist",

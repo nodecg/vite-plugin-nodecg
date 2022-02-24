@@ -1,7 +1,7 @@
 {
   "name": "vite-plugin-nodecg",
-  "version": "0.1.0",
-  "description": "",
+  "version": "1.0.0",
+  "description": "Vite plugin to enable its use with NodeCG",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "keywords": [
@@ -11,7 +11,8 @@
     "node": ">=16"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "dev": "tsc --watch"
   },
   "author": {
     "name": "Daniel Shields",
@@ -30,7 +31,9 @@
     "vite": "^2.8.4"
   },
   "dependencies": {
-    "cheerio": "^1.0.0-rc.10",
-    "globby": "^13.1.1"
+    "cheerio": "^1.0.0-rc.10"
+  },
+  "peerDependencies": {
+    "vite": "^2.8.4"
   }
 }

@@ -1,7 +1,7 @@
 import path from 'path'
 import fs from 'fs'
 import cheerio from 'cheerio'
-import type { InputOptions, OutputOptions } from 'rollup'
+import type { InputOptions } from 'rollup'
 import type { ResolvedConfig, UserConfig, Manifest } from 'vite'
 
 export default function viteNodeCGPlugin() {
