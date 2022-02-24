@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-nodecg",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Vite plugin to enable its use with NodeCG",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -10,6 +10,7 @@
   "engines": {
     "node": ">=16"
   },
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch"
