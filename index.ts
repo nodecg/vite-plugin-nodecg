@@ -2,13 +2,19 @@ import path from 'path'
 import fs from 'fs'
 import cheerio from 'cheerio'
 import type { InputOptions } from 'rollup'
-import type { ResolvedConfig, UserConfig, Manifest } from 'vite'
+import type { ResolvedConfig, UserConfig, Manifest, Plugin } from 'vite'
 
-export default function viteNodeCGPlugin() {
+export default function viteNodeCGPlugin(): Plugin {
+    const bundleName = path.basename(process.cwd())
+
+    let graphicTemplate = fs.readFileSync(path.join(process.cwd(), 'src/graphics/template.html'))
+    let dashboardTemplate = fs.readFileSync(path.join(process.cwd(), 'src/dashboard/template.html'))
+
     let config: ResolvedConfig
-    let graphicTemplate: Buffer
-    let dashboardTemplate: Buffer
     let assetManifest: Manifest
+    let protocol: string
+    let socketAddr: string
+
     let inputOptions: InputOptions
 
     function injectAssets(html: string | Buffer, entry: string) {
@@ -17,18 +23,18 @@ export default function viteNodeCGPlugin() {
         const assets = []
 
         if (config.mode === 'development') {
-            assets.push('<script type="module" src="/@vite/client"></script>')
-            assets.push(`<script type="module" src="/${entry}"></script>`)
+            assets.push(`<script type="module" src="${protocol}://${path.join(socketAddr, '@vite/client')}"></script>`)
+            assets.push(`<script type="module" src="${protocol}://${path.join(socketAddr, 'bundles', bundleName, entry)}"></script>`)
         } else if (config.mode === 'production' && assetManifest) {
             let entryManifest = assetManifest[entry]
             
             if (entryManifest.css) {
                 entryManifest.css.forEach(function (cssAsset) {
-                    assets.push(`<link rel="stylesheet" href="/${cssAsset}" />`)
-                });
+                    assets.push(`<link rel="stylesheet" href="${path.join(config.base, cssAsset)}" />`)
+                })
             }
 
-            assets.push(`<script type="module" src="/${entryManifest.file}"></script>`)
+            assets.push(`<script type="module" src="${path.join(config.base, entryManifest.file)}"></script>`)
         }
 
         $('head').append(assets.join('\n'))
@@ -74,29 +80,30 @@ export default function viteNodeCGPlugin() {
 
     return {
         name: 'nodecg',
-        config: (): UserConfig => {
-            const bundleName = path.basename(process.cwd())
+        config: (_config, {mode}): UserConfig => {
+            protocol = _config?.server?.https ? 'https' : 'http'
+            socketAddr = `${typeof _config?.server?.host === 'string' ? _config?.server?.host : 'localhost'}:${_config?.server?.port?.toString() ?? '3000'}`
 
             return {
                 build: {
-                    manifest: true
+                    manifest: true,
+                    outDir: 'shared/dist'
                 },
-                base: `/bundles/${bundleName}/`
+                server: {
+                    origin: `${protocol}://${socketAddr}`
+                },
+                base: `/bundles/${bundleName}/${mode === 'development' ? '' : 'shared/dist/'}`
             }
         },
 
         configResolved(resolvedConfig: ResolvedConfig) {
             config = resolvedConfig
-
-            graphicTemplate = fs.readFileSync(path.join(process.cwd(), 'src/graphics/template.html'))
-            dashboardTemplate = fs.readFileSync(path.join(process.cwd(), 'src/dashboard/template.html'))
         },
 
         buildStart(options: InputOptions) {
-            // dev inject
-
             inputOptions = options
-
+            
+            // dev inject
             if (!inputOptions?.input || config.mode !== 'development') return
 
             generateHTMLFiles()
