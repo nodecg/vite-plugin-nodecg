@@ -10,8 +10,5 @@
         "declaration": true,
         "esModuleInterop": true
     },
-    "exclude": [
-        "dist",
-        "node_modules"
-    ]
+    "exclude": ["dist", "node_modules"]
 }
