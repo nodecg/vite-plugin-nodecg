@@ -2,7 +2,7 @@
     "files": ["index.ts"],
     "compilerOptions": {
         "allowSyntheticDefaultImports": true,
-        "lib": ["ES2019"],
+        "lib": ["ES2019", "Webworker"],
         "module": "ES2020",
         "moduleResolution": "node",
         "target": "ES2019",

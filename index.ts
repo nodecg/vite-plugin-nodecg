@@ -1,8 +1,8 @@
-import path from 'path'
+import * as cheerio from 'cheerio'
 import fs from 'fs'
-import cheerio from 'cheerio'
+import path from 'path'
 import type { InputOptions } from 'rollup'
-import type { ResolvedConfig, UserConfig, Manifest, Plugin } from 'vite'
+import type { Manifest, Plugin, ResolvedConfig, UserConfig } from 'vite'
 
 export default function viteNodeCGPlugin(): Plugin {
     const bundleName = path.basename(process.cwd())
