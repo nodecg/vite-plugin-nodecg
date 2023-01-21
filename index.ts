@@ -2,7 +2,13 @@ import * as cheerio from 'cheerio'
 import fs from 'fs'
 import path from 'path'
 import type { InputOptions } from 'rollup'
-import type { Manifest, Plugin, ResolvedConfig, UserConfig } from 'vite'
+import type {
+    Manifest,
+    ManifestChunk,
+    Plugin,
+    ResolvedConfig,
+    UserConfig,
+} from 'vite'
 
 export default function viteNodeCGPlugin(): Plugin {
     const bundleName = path.basename(process.cwd())
@@ -21,19 +27,20 @@ export default function viteNodeCGPlugin(): Plugin {
 
     let inputOptions: InputOptions
 
-    function injectAssets(html: string | Buffer, entry: string) {
+    // take the template html and inject script and css assets into <head>
+    function injectAssetsTags(html: string | Buffer, entry: string) {
         const $ = cheerio.load(html)
 
-        const assets = []
+        const tags = []
 
         if (config.mode === 'development') {
-            assets.push(
+            tags.push(
                 `<script type="module" src="${protocol}://${path.join(
                     socketAddr,
                     '@vite/client'
                 )}"></script>`
             )
-            assets.push(
+            tags.push(
                 `<script type="module" src="${protocol}://${path.join(
                     socketAddr,
                     'bundles',
@@ -42,35 +49,51 @@ export default function viteNodeCGPlugin(): Plugin {
                 )}"></script>`
             )
         } else if (config.mode === 'production' && assetManifest) {
-            let entryManifest = assetManifest[entry]
+            let entryChunk = assetManifest[entry]
 
-            if (entryManifest.css) {
-                entryManifest.css.forEach(function (cssAsset) {
-                    assets.push(
+            function generateCssTags(
+                chunk: ManifestChunk,
+                alreadyProcessed: string[] = []
+            ) {
+                chunk.css?.forEach((cssPath) => {
+                    if (alreadyProcessed.includes(cssPath)) return // de-dupe assets
+
+                    tags.push(
                         `<link rel="stylesheet" href="${path.join(
                             config.base,
-                            cssAsset
+                            cssPath
                         )}" />`
                     )
+
+                    alreadyProcessed.push(cssPath)
+                })
+
+                // recurse
+                chunk.imports?.forEach((importPath) => {
+                    generateCssTags(assetManifest[importPath], alreadyProcessed)
                 })
             }
 
-            assets.push(
+            generateCssTags(entryChunk)
+
+            tags.push(
                 `<script type="module" src="${path.join(
                     config.base,
-                    entryManifest.file
+                    entryChunk.file
                 )}"></script>`
             )
         }
 
-        $('head').append(assets.join('\n'))
+        $('head').append(tags.join('\n'))
 
         return $.html()
     }
 
+    // for each input (graphics & dashboard panels) create an html file and emit to disk
     function generateHTMLFiles() {
         let inputs: string[]
 
+        // populate inputs, taking into account "input" can come in 3 forms
         if (typeof inputOptions.input === 'string') {
             inputs = [inputOptions.input]
         } else if (Array.isArray(inputOptions.input)) {
@@ -82,6 +105,7 @@ export default function viteNodeCGPlugin(): Plugin {
         const graphicsDir = path.join(process.cwd(), 'graphics')
         const dashboardDir = path.join(process.cwd(), 'dashboard')
 
+        // clear build directories
         if (fs.existsSync(graphicsDir))
             fs.rmSync(graphicsDir, { recursive: true, force: true })
         if (fs.existsSync(dashboardDir))
@@ -92,11 +116,12 @@ export default function viteNodeCGPlugin(): Plugin {
 
         const templates = {} as { [key: string]: string }
 
+        // generate string template for each input
         inputs.forEach((input) => {
             const type = path.basename(path.dirname(input))
             const name = path.basename(input, path.extname(input))
 
-            const html = injectAssets(
+            const html = injectAssetsTags(
                 type === 'dashboard' ? dashboardTemplate : graphicTemplate,
                 input.replace(/^(\.\/)/, '')
             )
@@ -104,6 +129,7 @@ export default function viteNodeCGPlugin(): Plugin {
             templates[`${type}/${name}.html`] = html
         })
 
+        // write each template to file
         for (const [filePath, template] of Object.entries(templates)) {
             fs.writeFileSync(path.join(process.cwd(), filePath), template)
         }
@@ -111,6 +137,8 @@ export default function viteNodeCGPlugin(): Plugin {
 
     return {
         name: 'nodecg',
+
+        // validate and setup defaults in user's vite config
         config: (_config, { mode }): UserConfig => {
             protocol = _config?.server?.https ? 'https' : 'http'
             socketAddr = `${
@@ -134,25 +162,25 @@ export default function viteNodeCGPlugin(): Plugin {
         },
 
         configResolved(resolvedConfig: ResolvedConfig) {
+            // Capture resolved config for use in injectAssets
             config = resolvedConfig
         },
 
         buildStart(options: InputOptions) {
+            // capture inputOptions for use in generateHtmlFiles in both dev & prod
             inputOptions = options
 
-            // dev inject
             if (!inputOptions?.input || config.mode !== 'development') return
 
+            // dev inject
             generateHTMLFiles()
         },
 
         writeBundle() {
-            // prod inject
-
             if (!inputOptions?.input || config.mode !== 'production') return
 
             try {
-                // would be nice to not have to re-read the file from disk but I don't see another way
+                // would be nice to not have to read the asset manifest from disk but I don't see another way
                 // relevant: https://github.com/vitejs/vite/blob/a9dfce38108e796e0de0e3b43ced34d60883cef3/packages/vite/src/node/ssr/ssrManifestPlugin.ts
                 assetManifest = JSON.parse(
                     fs
@@ -172,6 +200,7 @@ export default function viteNodeCGPlugin(): Plugin {
                 return
             }
 
+            // prod inject
             generateHTMLFiles()
         },
     }
