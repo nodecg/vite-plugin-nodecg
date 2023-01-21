@@ -1,6 +1,7 @@
 import * as cheerio from 'cheerio'
 import fs from 'fs'
 import path from 'path'
+import { minimatch } from 'minimatch'
 import type { InputOptions } from 'rollup'
 import type {
     Manifest,
@@ -10,15 +11,21 @@ import type {
     UserConfig,
 } from 'vite'
 
-export default function viteNodeCGPlugin(): Plugin {
+type PluginOptions = { templates: { [key: string]: string } }
+
+export default function viteNodeCGPlugin(pluginOptions: PluginOptions): Plugin {
     const bundleName = path.basename(process.cwd())
 
-    let graphicTemplate = fs.readFileSync(
-        path.join(process.cwd(), 'src/graphics/template.html')
-    )
-    let dashboardTemplate = fs.readFileSync(
-        path.join(process.cwd(), 'src/dashboard/template.html')
-    )
+    const templateConfig = pluginOptions.templates ?? {
+        './src/graphics/**.ts': './src/graphics/template.html',
+        './src/dashboard/**.ts': './src/dashboard/template.html',
+    }
+    const templates = {} as { [key: string]: Buffer }
+
+    for (const [matchPath, templatePath] of Object.entries(templateConfig)) {
+        const fullPath = path.join(process.cwd(), templatePath)
+        templates[matchPath] = fs.readFileSync(fullPath)
+    }
 
     let config: ResolvedConfig
     let assetManifest: Manifest
@@ -89,7 +96,7 @@ export default function viteNodeCGPlugin(): Plugin {
         return $.html()
     }
 
-    // for each input (graphics & dashboard panels) create an html file and emit to disk
+    // for each input (graphics & dashboard panels) create an html doc and emit to disk
     function generateHTMLFiles() {
         let inputs: string[]
 
@@ -114,24 +121,39 @@ export default function viteNodeCGPlugin(): Plugin {
         fs.mkdirSync(graphicsDir)
         fs.mkdirSync(dashboardDir)
 
-        const templates = {} as { [key: string]: string }
+        const htmlDocs = {} as { [key: string]: string }
 
-        // generate string template for each input
+        // generate string html for each input
         inputs.forEach((input) => {
             const type = path.basename(path.dirname(input))
             const name = path.basename(input, path.extname(input))
 
+            const templateMatchPath = Object.keys(templates).find(
+                (matchPath) => {
+                    return minimatch(input, matchPath)
+                }
+            )
+
+            const template = templates[templateMatchPath]
+
+            if (!template) {
+                console.warn(
+                    `vite-plugin-nodecg: No template found to match input "${input}". This graphic/dashboard will not be built.`
+                )
+                return
+            }
+
             const html = injectAssetsTags(
-                type === 'dashboard' ? dashboardTemplate : graphicTemplate,
+                template,
                 input.replace(/^(\.\/)/, '')
             )
 
-            templates[`${type}/${name}.html`] = html
+            htmlDocs[`${type}/${name}.html`] = html
         })
 
-        // write each template to file
-        for (const [filePath, template] of Object.entries(templates)) {
-            fs.writeFileSync(path.join(process.cwd(), filePath), template)
+        // write each html doc to disk
+        for (const [filePath, htmlDoc] of Object.entries(htmlDocs)) {
+            fs.writeFileSync(path.join(process.cwd(), filePath), htmlDoc)
         }
     }
 
