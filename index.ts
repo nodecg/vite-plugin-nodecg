@@ -10,29 +10,53 @@ import type {
     ResolvedConfig,
     UserConfig,
 } from 'vite'
+import { globbySync } from 'globby'
 
-type PluginOptions = { templates: { [key: string]: string } }
+export interface PluginConfig {
+    /** Use to map input files to template paths 
+     * 
+     * @default {
+        './src/graphics/*.ts': './src/graphics/template.html',
+        './src/dashboard/*.ts': './src/dashboard/template.html',
+    }
+    */
+    inputs: { [key: string]: string }
+}
 
-export default function viteNodeCGPlugin(pluginOptions: PluginOptions): Plugin {
+export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
     const bundleName = path.basename(process.cwd())
 
-    const templateConfig = pluginOptions.templates ?? {
-        './src/graphics/**.ts': './src/graphics/template.html',
-        './src/dashboard/**.ts': './src/dashboard/template.html',
+    const inputConfig = pluginConfig?.inputs ?? {
+        './src/graphics/*.ts': './src/graphics/template.html',
+        './src/dashboard/*.ts': './src/dashboard/template.html',
     }
-    const templates = {} as { [key: string]: Buffer }
 
-    for (const [matchPath, templatePath] of Object.entries(templateConfig)) {
+    // string array of paths to all input files (always ignore ts declaration files)
+    const inputs = globbySync([...Object.keys(inputConfig), '!**.d.ts'])
+
+    // now we know which inputs actually exist, lets clean up unused inputConfig entries so we don't load templates we don't need
+    // useful in the case the default inputsConfig is used, but the nodecg bundle has only dashboards or only graphics (or no inputs at all)
+    Object.keys(inputConfig).forEach((matchPath) => {
+        if (!inputs.some((input) => minimatch(input, matchPath)))
+            delete inputConfig[matchPath]
+    })
+
+    console.log('vite-plugin-nodecg: Found the following inputs: ', inputs)
+
+    // map from template paths to file buffers
+    const templates = {} as { [key: string]: Buffer }
+    Object.values(inputConfig).forEach((templatePath) => {
+        if (templates[templatePath]) return // skip if already read
         const fullPath = path.join(process.cwd(), templatePath)
-        templates[matchPath] = fs.readFileSync(fullPath)
-    }
+        templates[templatePath] = fs.readFileSync(fullPath)
+    })
 
     let config: ResolvedConfig
     let assetManifest: Manifest
     let protocol: string
     let socketAddr: string
 
-    let inputOptions: InputOptions
+    let resolvedInputOptions: InputOptions
 
     // take the template html and inject script and css assets into <head>
     function injectAssetsTags(html: string | Buffer, entry: string) {
@@ -98,15 +122,15 @@ export default function viteNodeCGPlugin(pluginOptions: PluginOptions): Plugin {
 
     // for each input (graphics & dashboard panels) create an html doc and emit to disk
     function generateHTMLFiles() {
-        let inputs: string[]
+        let resolvedInputs: string[]
 
         // populate inputs, taking into account "input" can come in 3 forms
-        if (typeof inputOptions.input === 'string') {
-            inputs = [inputOptions.input]
-        } else if (Array.isArray(inputOptions.input)) {
-            inputs = inputOptions.input
+        if (typeof resolvedInputOptions.input === 'string') {
+            resolvedInputs = [resolvedInputOptions.input]
+        } else if (Array.isArray(resolvedInputOptions.input)) {
+            resolvedInputs = resolvedInputOptions.input
         } else {
-            inputs = Object.values(inputOptions.input)
+            resolvedInputs = Object.values(resolvedInputOptions.input)
         }
 
         const graphicsDir = path.join(process.cwd(), 'graphics')
@@ -124,31 +148,33 @@ export default function viteNodeCGPlugin(pluginOptions: PluginOptions): Plugin {
         const htmlDocs = {} as { [key: string]: string }
 
         // generate string html for each input
-        inputs.forEach((input) => {
-            const type = path.basename(path.dirname(input))
-            const name = path.basename(input, path.extname(input))
+        resolvedInputs.forEach((inputPath) => {
+            // find first template that has a match path that this input satisfies
+            const matchPath = Object.keys(inputConfig).find((matchPath) => {
+                return minimatch(inputPath, matchPath)
+            })
 
-            const templateMatchPath = Object.keys(templates).find(
-                (matchPath) => {
-                    return minimatch(input, matchPath)
-                }
-            )
+            const templatePath = inputConfig[matchPath]
+            const template = templates[templatePath]
 
-            const template = templates[templateMatchPath]
-
+            // check template was found in the inputConfig and we loaded it from disk, otherwise skip this input
             if (!template) {
-                console.warn(
-                    `vite-plugin-nodecg: No template found to match input "${input}". This graphic/dashboard will not be built.`
+                console.error(
+                    `vite-plugin-nodecg: No template found to match input "${inputPath}". This probably means the input file was manually specified in the vite rollup config, and the graphic/dashboard will not be built.`
                 )
                 return
             }
 
+            // add asset tags to template
             const html = injectAssetsTags(
-                template,
-                input.replace(/^(\.\/)/, '')
+                templates[templatePath],
+                inputPath.replace(/^(\.\/)/, '')
             )
 
-            htmlDocs[`${type}/${name}.html`] = html
+            const dirname = path.basename(path.dirname(inputPath))
+            const name = path.basename(inputPath, path.extname(inputPath))
+
+            htmlDocs[`${dirname}/${name}.html`] = html
         })
 
         // write each html doc to disk
@@ -173,6 +199,9 @@ export default function viteNodeCGPlugin(pluginOptions: PluginOptions): Plugin {
                 build: {
                     manifest: true,
                     outDir: 'shared/dist',
+                    rollupOptions: {
+                        input: inputs,
+                    },
                 },
                 server: {
                     origin: `${protocol}://${socketAddr}`,
@@ -190,16 +219,18 @@ export default function viteNodeCGPlugin(pluginOptions: PluginOptions): Plugin {
 
         buildStart(options: InputOptions) {
             // capture inputOptions for use in generateHtmlFiles in both dev & prod
-            inputOptions = options
+            resolvedInputOptions = options
 
-            if (!inputOptions?.input || config.mode !== 'development') return
+            if (!resolvedInputOptions?.input || config.mode !== 'development')
+                return
 
             // dev inject
             generateHTMLFiles()
         },
 
         writeBundle() {
-            if (!inputOptions?.input || config.mode !== 'production') return
+            if (!resolvedInputOptions?.input || config.mode !== 'production')
+                return
 
             try {
                 // would be nice to not have to read the asset manifest from disk but I don't see another way
