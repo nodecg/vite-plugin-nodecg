@@ -9,6 +9,5 @@
         "outDir": "./dist",
         "declaration": true,
         "esModuleInterop": true
-    },
-    "exclude": ["dist", "node_modules"]
+    }
 }
