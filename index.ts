@@ -27,8 +27,8 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
     const bundleName = path.basename(process.cwd())
 
     const inputConfig = pluginConfig?.inputs ?? {
-        './src/graphics/*.ts': './src/graphics/template.html',
-        './src/dashboard/*.ts': './src/dashboard/template.html',
+        './src/graphics/*.{js,ts}': './src/graphics/template.html',
+        './src/dashboard/*.{js,ts}': './src/dashboard/template.html',
     }
 
     // string array of paths to all input files (always ignore ts declaration files)
