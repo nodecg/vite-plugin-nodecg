@@ -1,4 +1,4 @@
-# vite-plugin-nodecg
+# [vite-plugin-nodecg](https://www.npmjs.com/package/vite-plugin-nodecg)
 
 ### Vite plugin to enable its use with NodeCG
 
