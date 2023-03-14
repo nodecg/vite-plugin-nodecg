@@ -193,7 +193,7 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
                 typeof _config?.server?.host === 'string'
                     ? _config?.server?.host
                     : 'localhost'
-            }:${_config?.server?.port?.toString() ?? '3000'}`
+            }:${_config?.server?.port?.toString() ?? '5173'}`
 
             return {
                 build: {
