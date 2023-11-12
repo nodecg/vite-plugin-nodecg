@@ -1,0 +1,67 @@
+{
+  "_shared_module.js": {
+    "css": [
+      "assets/index.css"
+    ],
+    "file": "shared_module.js"
+  },
+  "dashboards.css": {
+    "file": "assets/dashboards.css",
+    "src": "dashboards.css"
+  },
+  "index.css": {
+    "file": "assets/index.css",
+    "src": "index.css"
+  },
+  "src/dashboard/panel1/main.js": {
+    "css": [
+      "assets/dashboards.css"
+    ],
+    "file": "assets/main-52e2c928.js",
+    "isEntry": true,
+    "src": "src/dashboard/panel1/main.js"
+  },
+  "src/dashboard/panel2/main.js": {
+    "css": [
+      "assets/dashboards.css"
+    ],
+    "file": "assets/main-d613c537.js",
+    "isEntry": true,
+    "src": "src/dashboard/panel2/main.js"
+  },
+  "src/graphics/graphic1/main.js": {
+    "css": [
+      "assets/index.css"
+    ],
+    "file": "assets/main-9dce6cfd.js",
+    "imports": [
+      "_shared_module.js"
+    ],
+    "isEntry": true,
+    "src": "src/graphics/graphic1/main.js"
+  },
+  "src/graphics/graphic2/main.js": {
+    "css": [
+      "assets/index.css"
+    ],
+    "file": "assets/main-cb76d62e.js",
+    "imports": [
+      "_shared_module.js"
+    ],
+    "isEntry": true,
+    "src": "src/graphics/graphic2/main.js"
+  },
+  "src/graphics/special_graphic.css": {
+    "file": "assets/special_graphic.css",
+    "src": "src/graphics/special_graphic.css"
+  },
+  "src/graphics/special_graphic.js": {
+    "css": [
+      "assets/special_graphic.css",
+      "assets/index.css"
+    ],
+    "file": "assets/special_graphic-89f22ec5.js",
+    "isEntry": true,
+    "src": "src/graphics/special_graphic.js"
+  }
+}

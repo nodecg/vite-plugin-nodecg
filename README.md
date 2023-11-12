@@ -73,7 +73,17 @@ Webpack is slow. Vite is reallly fast, but its dev server can't emit files to di
 
 `vite build --watch` emits the build to disk on source update but doesn't give you HMR. Using this plugin you get the full Vite experience.
 
+## Testing
+
+### To manually test:
+
+-   ensure the latest version of the plugin has been built locally and exists in `/dist`
+-   clear out the `dashboard`, `graphics` and `shared` directories from the `test/test-bundle`
+-   run `pnpm build` in `test-bundle` and examine the built files
+-   the new files should be identical to the committed ones
+-   for development, run `pnpm dev` and for now a manual review of the built files is required
+
 ## Todo
 
--   Write tests
+-   ~~Write tests~~ Automate the diff-test and consider unit tests
 -   ~~Investigate other template setup possibilties~~ (see [#2](https://github.com/Dan-Shields/vite-plugin-nodecg/issues/2))
