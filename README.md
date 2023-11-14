@@ -7,10 +7,11 @@ Generates .html files for your graphics and dashboards so they use the Vite dev-
 ## Setup
 
 1. Install the plugin in your bundle: `npm i -D vite-plugin-nodecg`
-2. Create 2 template.html files, `./src/graphics/template.html` and `./src/dashboard/template.html`
-3. Install the plugin in your `vite.config.mjs` (see example below)
-4. (Optional) Configure `vite-plugin-nodecg` to match your bundle's structure (again see below)
-5. Run `vite` for development or `vite build` for production
+2. Install the plugin in your `vite.config.mjs` (see example below)
+3. Either:
+    - a: Configure `vite-plugin-nodecg` to match your bundle's structure (again see below)
+    - b: Use the default configuration and create 2 template.html files, `./src/graphics/template.html` and `./src/dashboard/template.html`
+4. Run `vite` for development or `vite build` for production
 
 ## Default behaviour
 
