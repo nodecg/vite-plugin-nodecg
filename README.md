@@ -30,7 +30,7 @@ export default defineConfig({
 
 ### Why `.mjs`?
 
-`globby` now only supports ESM files, so for now your vite config will need to be in this format (if your bundle is using `"type": "module"` you can just use `.js` or `.ts`)
+`globby` now only supports ESM files, so for now your vite config will need to be in this format (if your bundle is using `"type": "module"` you can just use `.js` or `.ts`). See [#8](https://github.com/Dan-Shields/vite-plugin-nodecg/issues/8).
 
 ## Custom `vite.config.mjs`
 
@@ -102,5 +102,5 @@ Webpack is slow. Vite is reallly fast, but its dev server can't emit files to di
 
 ## Todo
 
--   ~~Write tests~~ Automate the diff-test and consider unit tests
+-   ~~Write tests~~ Automate the diff-test and consider unit tests. See [#9](https://github.com/Dan-Shields/vite-plugin-nodecg/issues/9)
 -   ~~Investigate other template setup possibilties~~ (see [#2](https://github.com/Dan-Shields/vite-plugin-nodecg/issues/2))
