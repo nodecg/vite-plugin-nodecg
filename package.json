@@ -26,7 +26,6 @@
     },
     "license": "ISC",
     "dependencies": {
-        "cheerio": "1.0.0-rc.12",
         "globby": "^13.2.2",
         "minimatch": "^6.2.0"
     },

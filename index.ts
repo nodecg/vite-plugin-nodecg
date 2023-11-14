@@ -1,7 +1,6 @@
 import fs from 'fs'
 import path from 'path'
 
-import * as cheerio from 'cheerio'
 import { minimatch } from 'minimatch'
 import { globbySync } from 'globby'
 
@@ -69,11 +68,11 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
     })
 
     // map from template paths to file buffers
-    const templates = {} as { [key: string]: Buffer }
+    const templates = {} as { [key: string]: string }
     Object.values(inputConfig).forEach((templatePath) => {
         if (templates[templatePath]) return // skip if already read
         const fullPath = path.posix.join(process.cwd(), templatePath)
-        templates[templatePath] = fs.readFileSync(fullPath)
+        templates[templatePath] = fs.readFileSync(fullPath, 'utf-8')
     })
 
     let config: ResolvedConfig
@@ -84,9 +83,7 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
     let resolvedInputOptions: InputOptions
 
     // take the template html and inject script and css assets into <head>
-    function injectAssetsTags(html: string | Buffer, entry: string) {
-        const $ = cheerio.load(html)
-
+    function injectAssetsTags(html: string, entry: string) {
         const tags = []
 
         if (config.mode === 'development') {
@@ -140,9 +137,11 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
             )
         }
 
-        $('head').append(tags.join('\n'))
+        const newHtml = html.includes('</head>')
+            ? html.replace('</head>', tags.join('\n') + '\n</head>')
+            : tags.join('\n') + '\n' + html
 
-        return $.html()
+        return newHtml
     }
 
     // for each input (graphics & dashboard panels) create an html doc and emit to disk
