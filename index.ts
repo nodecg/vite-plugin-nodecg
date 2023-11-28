@@ -76,9 +76,9 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
     })
 
     let config: ResolvedConfig
+    let dSrvProtocol: string
+    let dSrvHost: string
     let assetManifest: Manifest
-    let protocol: string
-    let socketAddr: string
 
     let resolvedInputOptions: InputOptions
 
@@ -88,14 +88,14 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
 
         if (config.mode === 'development') {
             tags.push(
-                `<script type="module" src="${protocol}://${path.posix.join(
-                    socketAddr,
+                `<script type="module" src="${dSrvProtocol}://${path.posix.join(
+                    dSrvHost,
                     '@vite/client'
                 )}"></script>`
             )
             tags.push(
-                `<script type="module" src="${protocol}://${path.posix.join(
-                    socketAddr,
+                `<script type="module" src="${dSrvProtocol}://${path.posix.join(
+                    dSrvHost,
                     'bundles',
                     bundleName,
                     entry
@@ -199,7 +199,7 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
                 fs.mkdirSync(dir, { recursive: true })
             } catch (e) {
                 console.error(
-                    `Could not create directory ${dir} for input ${filePath}. Skipping...`
+                    `vite-plugin-nodecg: Could not create directory ${dir} for input ${filePath}. Skipping...`
                 )
                 continue
             }
@@ -217,13 +217,6 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
 
         // validate and setup defaults in user's vite config
         config: (_config, { mode }): UserConfig => {
-            protocol = _config?.server?.https ? 'https' : 'http'
-            socketAddr = `${
-                typeof _config?.server?.host === 'string'
-                    ? _config?.server?.host
-                    : 'localhost'
-            }:${_config?.server?.port?.toString() ?? '5173'}`
-
             return {
                 build: {
                     manifest: true,
@@ -231,9 +224,6 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
                     rollupOptions: {
                         input: inputs,
                     },
-                },
-                server: {
-                    origin: `${protocol}://${socketAddr}`,
                 },
                 base: `/bundles/${bundleName}/${
                     mode === 'development' ? '' : 'shared/dist/'
@@ -249,12 +239,6 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
         buildStart(options: InputOptions) {
             // capture inputOptions for use in generateHtmlFiles in both dev & prod
             resolvedInputOptions = options
-
-            if (!resolvedInputOptions?.input || config.mode !== 'development')
-                return
-
-            // dev inject
-            generateHTMLFiles()
         },
 
         writeBundle() {
@@ -284,6 +268,17 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
 
             // prod inject
             generateHTMLFiles()
+        },
+
+        configureServer(server) {
+            server.httpServer.on('listening', () => {
+                dSrvProtocol = server.config.server.https ? 'https' : 'http'
+                dSrvHost = `${server.config.server.host ?? 'localhost'}:${
+                    server.config.server.port ?? '5173'
+                }`
+                // dev inject
+                generateHTMLFiles()
+            })
         },
     }
 }
