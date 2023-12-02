@@ -4,6 +4,12 @@
 
 Generates .html files for your graphics and dashboards so they use the Vite dev-server in development, and load assets directly in production.
 
+## Why?
+
+Webpack and Parcel are slow. Vite is reeeeally fast, but its dev server can't emit files to disk (kinda by design), so NodeCG can't add in it's client-side script.
+
+`vite build --watch` emits the build to disk on source update but doesn't give you HMR. Using this plugin you get the full Vite experience.
+
 ## Setup
 
 1. Install the plugin in your bundle: `npm i -D vite-plugin-nodecg`
@@ -84,12 +90,6 @@ export default defineConfig(() => {
     srcDir: './src'
 }
 ```
-
-## Why?
-
-Webpack is slow. Vite is reallly fast, but its dev server can't emit files to disk (kinda by design).
-
-`vite build --watch` emits the build to disk on source update but doesn't give you HMR. Using this plugin you get the full Vite experience.
 
 ## Testing
 
