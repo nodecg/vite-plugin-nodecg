@@ -21,12 +21,12 @@ export interface PluginConfig {
         'dashboard/*.{js,ts}': './src/dashboard/template.html',
     }
     */
-    inputs: { [key: string]: string }
+    inputs?: { [key: string]: string } | undefined
 
     /** Base directory for input-file paths
      * @default './src'
      */
-    srcDir: string
+    srcDir?: string | undefined
 }
 
 export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
