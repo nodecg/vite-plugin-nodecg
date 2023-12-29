@@ -105,3 +105,8 @@ export default defineConfig(() => {
 
 -   ~~Write tests~~ Automate the diff-test and consider unit tests. See [#9](https://github.com/Dan-Shields/vite-plugin-nodecg/issues/9)
 -   ~~Investigate other template setup possibilties~~ (see [#2](https://github.com/Dan-Shields/vite-plugin-nodecg/issues/2))
+
+## Acknowledgements
+- [Dan Shields](https://github.com/Dan-Shields) - Author and Maintainer
+- [Keiichiro "Hoishin" Amemiya](https://twitter.com/hoishinxii) - Contributor
+- [zoton2](https://github.com/zoton2) - Contributor
