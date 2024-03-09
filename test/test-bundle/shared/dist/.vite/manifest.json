@@ -1,0 +1,63 @@
+{
+  "_dashboards.js": {
+    "file": "assets/dashboards.css",
+    "src": "_dashboards.js"
+  },
+  "_index.js": {
+    "file": "assets/index.css",
+    "src": "_index.js"
+  },
+  "_shared_module.js": {
+    "file": "shared_module.js",
+    "css": [
+      "assets/index.css"
+    ]
+  },
+  "src/dashboard/panel1/main.js": {
+    "file": "assets/main-yjYfKNGp.js",
+    "src": "src/dashboard/panel1/main.js",
+    "isEntry": true,
+    "css": [
+      "assets/dashboards.css"
+    ]
+  },
+  "src/dashboard/panel2/main.js": {
+    "file": "assets/main-Bs__2WOY.js",
+    "src": "src/dashboard/panel2/main.js",
+    "isEntry": true,
+    "css": [
+      "assets/dashboards.css"
+    ]
+  },
+  "src/graphics/graphic1/main.js": {
+    "file": "assets/main-2RBSXISL.js",
+    "src": "src/graphics/graphic1/main.js",
+    "isEntry": true,
+    "imports": [
+      "_shared_module.js"
+    ],
+    "css": [
+      "assets/index.css"
+    ]
+  },
+  "src/graphics/graphic2/main.js": {
+    "file": "assets/main-Bnij4-YI.js",
+    "src": "src/graphics/graphic2/main.js",
+    "isEntry": true,
+    "imports": [
+      "_shared_module.js"
+    ],
+    "css": [
+      "assets/index.css"
+    ]
+  },
+  "src/graphics/special_graphic.js": {
+    "file": "assets/special_graphic-Cvr58goG.js",
+    "src": "src/graphics/special_graphic.js",
+    "isEntry": true,
+    "css": [
+      "assets/special_graphic.css",
+      "assets/index.css"
+    ]
+  }
+}

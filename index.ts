@@ -254,7 +254,7 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
                             path.posix.join(
                                 process.cwd(),
                                 config.build.outDir,
-                                'manifest.json'
+                                '.vite/manifest.json'
                             )
                         )
                         .toString()

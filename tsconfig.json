@@ -4,7 +4,7 @@
         "allowSyntheticDefaultImports": true,
         "lib": ["ES2019", "Webworker"],
         "module": "ES2020",
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "target": "ES2019",
         "outDir": "./dist",
         "declaration": true,
