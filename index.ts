@@ -276,6 +276,10 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
                 dSrvHost = `${server.config.server.host ?? 'localhost'}:${
                     server.config.server.port ?? '5173'
                 }`
+                
+                // fix dev server origin
+                server.config.server.origin = `${dSrvProtocol}://${dSrvHost}`;
+
                 // dev inject
                 generateHTMLFiles()
             })
