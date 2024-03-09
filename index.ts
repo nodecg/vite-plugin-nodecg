@@ -219,7 +219,7 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
         config: (_config, { mode }): UserConfig => {
             return {
                 build: {
-                    manifest: true,
+                    manifest: 'manifest.json',
                     outDir: 'shared/dist',
                     rollupOptions: {
                         input: inputs,
@@ -254,7 +254,7 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
                             path.posix.join(
                                 process.cwd(),
                                 config.build.outDir,
-                                '.vite/manifest.json'
+                                'manifest.json'
                             )
                         )
                         .toString()

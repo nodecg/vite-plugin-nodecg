@@ -7,6 +7,6 @@
     },
     "dependencies": {
         "globby": "^14.0.1",
-        "vite": "^5.1.5"
+        "vite": "^4.0.4"
     }
 }
