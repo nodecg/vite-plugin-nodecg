@@ -8,7 +8,7 @@
         "vite-plugin"
     ],
     "engines": {
-        "node": ">=18"
+        "node": ">=16"
     },
     "type": "module",
     "scripts": {

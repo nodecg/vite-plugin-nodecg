@@ -6,10 +6,10 @@ settings:
 
 dependencies:
   globby:
-    specifier: ^14.0.1
+    specifier: ^14.0.0
     version: 14.0.1
   vite:
-    specifier: ^4.0.4
+    specifier: ^4.5.0
     version: 4.5.2
 
 packages:
