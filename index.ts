@@ -90,6 +90,8 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
             tags.push(
                 `<script type="module" src="${dSrvProtocol}://${path.posix.join(
                     dSrvHost,
+                    'bundles',
+                    bundleName,
                     '@vite/client'
                 )}"></script>`
             )
@@ -276,9 +278,9 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
                 dSrvHost = `${server.config.server.host ?? 'localhost'}:${
                     server.config.server.port ?? '5173'
                 }`
-                
+
                 // fix dev server origin
-                server.config.server.origin = `${dSrvProtocol}://${dSrvHost}`;
+                server.config.server.origin = `${dSrvProtocol}://${dSrvHost}`
 
                 // dev inject
                 generateHTMLFiles()
