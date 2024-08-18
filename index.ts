@@ -27,6 +27,8 @@ export interface PluginConfig {
      * @default './src'
      */
     srcDir?: string | undefined
+
+    react?: boolean
 }
 
 export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
@@ -45,6 +47,8 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
         ),
         '!**.d.ts',
     ]
+
+    const react = pluginConfig?.react ?? false;
 
     // string array of paths to all input files (always ignore ts declaration files)
     const inputs = globbySync(inputPatterns)
@@ -87,6 +91,22 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
         const tags = []
 
         if (config.mode === 'development') {
+            if (react) {
+                tags.push(
+                    `<script type="module">
+                        import RefreshRuntime from "${dSrvProtocol}://${path.posix.join(
+                            dSrvHost,
+                            'bundles',
+                            bundleName,
+                            '@react-refresh'
+                        )}"
+                        RefreshRuntime.injectIntoGlobalHook(window)
+                        window.$RefreshReg$ = () => {}
+                        window.$RefreshSig$ = () => (type) => type
+                        window.__vite_plugin_react_preamble_installed__ = true
+                    </script>`
+                )
+            }
             tags.push(
                 `<script type="module" src="${dSrvProtocol}://${path.posix.join(
                     dSrvHost,
