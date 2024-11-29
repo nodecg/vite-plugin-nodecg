@@ -37,7 +37,13 @@
         "vite": "^5.1.5"
     },
     "peerDependencies": {
+        "@vitejs/plugin-react": "^4.3.4",
         "vite": "^4.0.4 || ^5.1.5"
     },
-    "packageManager": "pnpm@8.15.4+sha256.cea6d0bdf2de3a0549582da3983c70c92ffc577ff4410cbf190817ddc35137c2"
+    "peerDependenciesMeta": {
+        "@vitejs/plugin-react": {
+            "optional": true
+        }
+    },
+    "packageManager": "pnpm@8.15.9+sha512.499434c9d8fdd1a2794ebf4552b3b25c0a633abcee5bb15e7b5de90f32f47b513aca98cd5cfd001c31f0db454bc3804edccd578501e4ca293a6816166bbd9f81"
 }
