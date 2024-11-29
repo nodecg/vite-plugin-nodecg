@@ -76,6 +76,7 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
     })
 
     let config: ResolvedConfig
+    let reactPreamble: string
     let dSrvProtocol: string
     let dSrvHost: string
     let assetManifest: Manifest
@@ -87,6 +88,15 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
         const tags = []
 
         if (config.mode === 'development') {
+            if (reactPreamble) {
+                tags.push(
+                    `<script type="module">${reactPreamble.replace(/__BASE__/g, `${dSrvProtocol}://${path.posix.join(
+                            dSrvHost,
+                            'bundles',
+                            bundleName
+                        )}/`)}</script>`
+                )
+            }
             tags.push(
                 `<script type="module" src="${dSrvProtocol}://${path.posix.join(
                     dSrvHost,
@@ -233,9 +243,17 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
             }
         },
 
-        configResolved(resolvedConfig: ResolvedConfig) {
+        async configResolved(resolvedConfig: ResolvedConfig) {
             // Capture resolved config for use in injectAssets
             config = resolvedConfig
+            // Check to see if one of the plugins is vite:react-refresh
+            if (resolvedConfig.plugins.find((plugin) => plugin.name === 'vite:react-refresh')) {
+                // If it is, import it and get the preamble code from it if possible
+                reactPreamble = (await import('@vitejs/plugin-react'))?.default?.preambleCode
+                if (!reactPreamble) {
+                    console.warn('Unable to get React refresh preamble')
+                }
+            }
         },
 
         buildStart(options: InputOptions) {
