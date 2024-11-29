@@ -28,7 +28,7 @@ export interface PluginConfig {
      */
     srcDir?: string | undefined
 
-    react?: boolean
+    react?: { preambleCode: string };
 }
 
 export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
@@ -91,20 +91,14 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
         const tags = []
 
         if (config.mode === 'development') {
-            if (react) {
+            if (react && typeof react.preambleCode === 'string') {
                 tags.push(
-                    `<script type="module">
-                        import RefreshRuntime from "${dSrvProtocol}://${path.posix.join(
+                    `<script type="module">${react.preambleCode.replace('__BASE__@react-refresh', `${dSrvProtocol}://${path.posix.join(
                             dSrvHost,
                             'bundles',
                             bundleName,
                             '@react-refresh'
-                        )}"
-                        RefreshRuntime.injectIntoGlobalHook(window)
-                        window.$RefreshReg$ = () => {}
-                        window.$RefreshSig$ = () => (type) => type
-                        window.__vite_plugin_react_preamble_installed__ = true
-                    </script>`
+                        )}`)}</script>`
                 )
             }
             tags.push(
