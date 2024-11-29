@@ -93,11 +93,11 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
         if (config.mode === 'development') {
             if (react && typeof react.preambleCode === 'string') {
                 tags.push(
-                    `<script type="module">${react.preambleCode.replace('__BASE__@react-refresh', `${dSrvProtocol}://${path.posix.join(
+                    `<script type="module">${react.preambleCode.replace(/__BASE__/g, `${dSrvProtocol}://${path.posix.join(
                             dSrvHost,
                             'bundles',
                             bundleName,
-                            '@react-refresh'
+                            '/' // add trailing /
                         )}`)}</script>`
                 )
             }
