@@ -13,7 +13,8 @@
     "type": "module",
     "scripts": {
         "build": "tsc",
-        "dev": "tsc --watch"
+        "dev": "tsc --watch",
+        "check-format": "prettier --check ."
     },
     "author": {
         "name": "Daniel Shields",
@@ -38,5 +39,5 @@
     "peerDependencies": {
         "vite": "^4.0.4 || ^5.1.5"
     },
-    "packageManager": "pnpm@8.15.4+sha256.cea6d0bdf2de3a0549582da3983c70c92ffc577ff4410cbf190817ddc35137c2"
+    "packageManager": "pnpm@9.15.3"
 }
