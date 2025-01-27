@@ -52,7 +52,7 @@ When determining which input to use, `vite-plugin-nodecg` will iterate top to bo
 
 ### Source directory & file structure
 
-`<bundle-dir>/src` is the default base path for any input files found inside, such that the input's path relative to it is reflected in the output directory of the .html file, e.g. the input `<bundle-dir>/src/graphics/graphic1/main.js` will html file output to `<bundle-dir>/graphics/graphic1/main.html`. Any inputs inside who's first sub-directory relative to `<bundle-dir>/src` is _not_ `graphics` or `dsahboard`, will not be picked up by NodeCG and (probably) pointless. 
+`<bundle-dir>/src` is the default base path for any input files found inside, such that the input's path relative to it is reflected in the output directory of the .html file, e.g. the input `<bundle-dir>/src/graphics/graphic1/main.js` will html file output to `<bundle-dir>/graphics/graphic1/main.html`. Any inputs inside who's first sub-directory relative to `<bundle-dir>/src` is _not_ `graphics` or `dsahboard`, will not be picked up by NodeCG and (probably) pointless.
 
 If you want `vite-plugin-nodecg` to look in a different directory to `./src` for your input files, specify this using the `srcDir` config option.
 
@@ -69,7 +69,8 @@ export default defineConfig(() => {
         plugins: [
             NodeCGPlugin({
                 inputs: {
-                    'graphics/special_graphic/main.js': './templates/special_template.html',
+                    'graphics/special_graphic/main.js':
+                        './templates/special_template.html',
                     'graphics/*/main.js': './templates/graphics.html',
                     'dashboard/*/main.js': './templates/dashboard.html',
                 },
@@ -95,18 +96,19 @@ export default defineConfig(() => {
 
 ### To manually test:
 
--   ensure the latest version of the plugin has been built locally and exists in `/dist`
--   clear out the `dashboard`, `graphics` and `shared` directories from the `test/test-bundle`
--   run `pnpm build` in `test-bundle` and examine the built files
--   the new files should be identical to the committed ones
--   for development, run `pnpm dev` and for now a manual review of the built files is required
+- ensure the latest version of the plugin has been built locally and exists in `/dist`
+- clear out the `dashboard`, `graphics` and `shared` directories from the `test/test-bundle`
+- run `pnpm build` in `test-bundle` and examine the built files
+- the new files should be identical to the committed ones
+- for development, run `pnpm dev` and for now a manual review of the built files is required
 
 ## Todo
 
--   ~~Write tests~~ Automate the diff-test and consider unit tests. See [#9](https://github.com/Dan-Shields/vite-plugin-nodecg/issues/9)
--   ~~Investigate other template setup possibilties~~ (see [#2](https://github.com/Dan-Shields/vite-plugin-nodecg/issues/2))
+- ~~Write tests~~ Automate the diff-test and consider unit tests. See [#9](https://github.com/Dan-Shields/vite-plugin-nodecg/issues/9)
+- ~~Investigate other template setup possibilties~~ (see [#2](https://github.com/Dan-Shields/vite-plugin-nodecg/issues/2))
 
 ## Acknowledgements
+
 - [Dan Shields](https://github.com/Dan-Shields) - Author and Maintainer
 - [Keiichiro "Hoishin" Amemiya](https://twitter.com/hoishinxii) - Contributor
 - [zoton2](https://github.com/zoton2) - Contributor
