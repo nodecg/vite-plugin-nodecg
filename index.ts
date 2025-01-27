@@ -41,7 +41,7 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
 
     const inputPatterns = [
         ...Object.keys(inputConfig).map((matchPath) =>
-            path.posix.join(srcDir, matchPath)
+            path.posix.join(srcDir, matchPath),
         ),
         '!**.d.ts',
     ]
@@ -61,7 +61,7 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
     Object.keys(inputConfig).forEach((matchPath) => {
         if (
             !inputs.some((input) =>
-                minimatch(input, path.posix.join(srcDir, matchPath))
+                minimatch(input, path.posix.join(srcDir, matchPath)),
             )
         )
             delete inputConfig[matchPath]
@@ -92,23 +92,23 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
                     dSrvHost,
                     'bundles',
                     bundleName,
-                    '@vite/client'
-                )}"></script>`
+                    '@vite/client',
+                )}"></script>`,
             )
             tags.push(
                 `<script type="module" src="${dSrvProtocol}://${path.posix.join(
                     dSrvHost,
                     'bundles',
                     bundleName,
-                    entry
-                )}"></script>`
+                    entry,
+                )}"></script>`,
             )
         } else if (config.mode === 'production' && assetManifest) {
             let entryChunk = assetManifest[entry]
 
             function generateCssTags(
                 chunk: ManifestChunk,
-                alreadyProcessed: string[] = []
+                alreadyProcessed: string[] = [],
             ) {
                 chunk.css?.forEach((cssPath) => {
                     if (alreadyProcessed.includes(cssPath)) return // de-dupe assets
@@ -116,8 +116,8 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
                     tags.push(
                         `<link rel="stylesheet" href="${path.posix.join(
                             config.base,
-                            cssPath
-                        )}" />`
+                            cssPath,
+                        )}" />`,
                     )
 
                     alreadyProcessed.push(cssPath)
@@ -134,8 +134,8 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
             tags.push(
                 `<script type="module" src="${path.posix.join(
                     config.base,
-                    entryChunk.file
-                )}"></script>`
+                    entryChunk.file,
+                )}"></script>`,
             )
         }
 
@@ -174,7 +174,7 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
             // check template was found in the inputConfig and we loaded it from disk, otherwise skip this input
             if (!template) {
                 console.error(
-                    `vite-plugin-nodecg: No template found to match input "${inputPath}". This probably means the input file was manually specified in the vite rollup config, and the graphic/dashboard will not be built.`
+                    `vite-plugin-nodecg: No template found to match input "${inputPath}". This probably means the input file was manually specified in the vite rollup config, and the graphic/dashboard will not be built.`,
                 )
                 return
             }
@@ -182,7 +182,7 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
             // add asset tags to template
             const html = injectAssetsTags(
                 templates[templatePath],
-                inputPath.replace(/^(\.\/)/, '')
+                inputPath.replace(/^(\.\/)/, ''),
             )
 
             const buildDir = path.dirname(path.relative(srcDir, inputPath))
@@ -201,14 +201,14 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
                 fs.mkdirSync(dir, { recursive: true })
             } catch (e) {
                 console.error(
-                    `vite-plugin-nodecg: Could not create directory ${dir} for input ${filePath}. Skipping...`
+                    `vite-plugin-nodecg: Could not create directory ${dir} for input ${filePath}. Skipping...`,
                 )
                 continue
             }
 
             fs.writeFile(fullFilePath, htmlDoc, () => {
                 console.log(
-                    `vite-plugin-nodecg: Wrote input ${filePath} to disk`
+                    `vite-plugin-nodecg: Wrote input ${filePath} to disk`,
                 )
             })
         }
@@ -256,14 +256,14 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
                             path.posix.join(
                                 process.cwd(),
                                 config.build.outDir,
-                                'manifest.json'
-                            )
+                                'manifest.json',
+                            ),
                         )
-                        .toString()
+                        .toString(),
                 )
             } catch (err) {
                 console.error(
-                    "vite-plugin-nodecg: Failed to load manifest.json from build directory. HTML files won't be generated."
+                    "vite-plugin-nodecg: Failed to load manifest.json from build directory. HTML files won't be generated.",
                 )
                 return
             }
