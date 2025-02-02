@@ -1,67 +1,69 @@
 {
+  "_dashboards.css": {
+    "file": "assets/dashboards.css",
+    "src": "_dashboards.css"
+  },
+  "_index.css": {
+    "file": "assets/index.css",
+    "src": "_index.css"
+  },
   "_shared_module.js": {
+    "file": "shared_module.js",
+    "name": "shared_module",
     "css": [
       "assets/index.css"
-    ],
-    "file": "shared_module.js"
-  },
-  "dashboards.css": {
-    "file": "assets/dashboards.css",
-    "src": "dashboards.css"
-  },
-  "index.css": {
-    "file": "assets/index.css",
-    "src": "index.css"
+    ]
   },
   "src/dashboard/panel1/main.js": {
+    "file": "assets/main-yjYfKNGp.js",
+    "name": "main",
+    "src": "src/dashboard/panel1/main.js",
+    "isEntry": true,
     "css": [
       "assets/dashboards.css"
-    ],
-    "file": "assets/main-52e2c928.js",
-    "isEntry": true,
-    "src": "src/dashboard/panel1/main.js"
+    ]
   },
   "src/dashboard/panel2/main.js": {
+    "file": "assets/main-Bs__2WOY.js",
+    "name": "main",
+    "src": "src/dashboard/panel2/main.js",
+    "isEntry": true,
     "css": [
       "assets/dashboards.css"
-    ],
-    "file": "assets/main-d613c537.js",
-    "isEntry": true,
-    "src": "src/dashboard/panel2/main.js"
+    ]
   },
   "src/graphics/graphic1/main.js": {
-    "css": [
-      "assets/index.css"
-    ],
-    "file": "assets/main-9dce6cfd.js",
+    "file": "assets/main-2RBSXISL.js",
+    "name": "main",
+    "src": "src/graphics/graphic1/main.js",
+    "isEntry": true,
     "imports": [
       "_shared_module.js"
     ],
-    "isEntry": true,
-    "src": "src/graphics/graphic1/main.js"
+    "css": [
+      "assets/index.css"
+    ]
   },
   "src/graphics/graphic2/main.js": {
-    "css": [
-      "assets/index.css"
-    ],
-    "file": "assets/main-cb76d62e.js",
+    "file": "assets/main-Bnij4-YI.js",
+    "name": "main",
+    "src": "src/graphics/graphic2/main.js",
+    "isEntry": true,
     "imports": [
       "_shared_module.js"
     ],
-    "isEntry": true,
-    "src": "src/graphics/graphic2/main.js"
-  },
-  "src/graphics/special_graphic.css": {
-    "file": "assets/special_graphic.css",
-    "src": "src/graphics/special_graphic.css"
+    "css": [
+      "assets/index.css"
+    ]
   },
   "src/graphics/special_graphic.js": {
+    "file": "assets/special_graphic-Cvr58goG.js",
+    "name": "special_graphic",
+    "src": "src/graphics/special_graphic.js",
+    "isEntry": true,
     "css": [
       "assets/special_graphic.css",
       "assets/index.css"
-    ],
-    "file": "assets/special_graphic-89f22ec5.js",
-    "isEntry": true,
-    "src": "src/graphics/special_graphic.js"
+    ]
   }
 }
