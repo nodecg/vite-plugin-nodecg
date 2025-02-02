@@ -27,18 +27,18 @@
     },
     "license": "ISC",
     "dependencies": {
-        "globby": "^14.0.1",
-        "minimatch": "^9.0.3"
+        "globby": "^14.0.2",
+        "minimatch": "^9.0.5"
     },
     "devDependencies": {
-        "@types/node": "^20.11.25",
+        "@types/node": "^20.17.16",
         "prettier": "^3.4.2",
-        "rollup": "^4.12.1",
-        "typescript": "^5.4.2",
-        "vite": "^5.1.5"
+        "rollup": "^4.34.0",
+        "typescript": "^5.7.3",
+        "vite": "^6.0.11"
     },
     "peerDependencies": {
-        "vite": "^4.0.4 || ^5.1.5"
+        "vite": "^4.0.4 || ^5.1.5 || ^6.0.11"
     },
     "packageManager": "pnpm@9.15.3"
 }
