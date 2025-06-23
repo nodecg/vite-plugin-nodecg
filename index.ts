@@ -30,7 +30,20 @@ export interface PluginConfig {
 }
 
 export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
-    const bundleName = path.basename(process.cwd())
+    // Read the bundle's package.json to get the bundle name
+    const packageJsonPath = path.join(process.cwd(), 'package.json')
+    let bundleName: string
+    try {
+        const packageJson = JSON.parse(
+            fs.readFileSync(packageJsonPath, 'utf-8'),
+        )
+        bundleName = packageJson.name
+    } catch (error) {
+        console.error(
+            `vite-plugin-nodecg: Could not read package.json at ${packageJsonPath}. Please ensure the file exists and is valid JSON.`,
+        )
+        process.exit(1)
+    }
 
     const inputConfig = pluginConfig?.inputs ?? {
         'graphics/*.{js,ts}': './src/graphics/template.html',
