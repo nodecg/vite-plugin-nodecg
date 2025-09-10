@@ -247,7 +247,7 @@ export default function viteNodeCGPlugin(pluginConfig: PluginConfig): Plugin {
             // Capture resolved config for use in injectAssets
             config = resolvedConfig
             // Check to see if one of the plugins is vite:react-refresh
-            if (resolvedConfig.plugins.find((plugin) => plugin.name === 'vite:react-refresh')) {
+            if (resolvedConfig.plugins.some((plugin) => plugin.name === 'vite:react-refresh')) {
                 // If it is, import it and get the preamble code from it if possible
                 reactPreamble = (await import('@vitejs/plugin-react'))?.default?.preambleCode
                 if (!reactPreamble) {
